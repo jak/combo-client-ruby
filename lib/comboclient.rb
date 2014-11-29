@@ -5,18 +5,20 @@ class ComboClient
 
   def initialize(host, topic)
     self.class.base_uri host
+    
+    @topic = topic
   end
 
   def facts
-    self.class.get("/topics/#{topic}/facts")
+    self.class.get("/topics/#{@topic}/facts")
   end
 
   def add(fact)
-    self.class.post("/topics/#{topic}/facts", body: fact.to_json, headers: {'Content-Type' => 'application/json'})
+    self.class.post("/topics/#{@topic}/facts", body: fact.to_json, headers: {'Content-Type' => 'application/json'})
   end
 
   def subscribe
-    response = self.class.post("/topics/#{topic}/subscriptions")
+    response = self.class.post("/topics/#{@topic}/subscriptions")
     poll_url = response.parsed_response["retrieval_url"]
     manager = ComboClientSubscriptionManager.new
     while manager.is_active? do
